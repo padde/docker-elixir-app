@@ -17,6 +17,7 @@ defmodule AppWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    resources "/todo_items", TodoItemController
   end
 
   # Other scopes may use custom stacks.
