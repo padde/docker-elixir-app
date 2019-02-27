@@ -76,7 +76,7 @@ ENV REPLACE_OS_VARS=true \
 
 COPY docker/entrypoint.sh .
 COPY --from=builder "/opt/app/_build/$MIX_ENV/rel/$APP_NAME/releases/$APP_VERSION/$APP_NAME.tar.gz" release.tar.gz
-RUN tar xfz release.tar.gz && rm release.tar.gz
+RUN tar xfz release.tar.gz
 
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["foreground"]

@@ -51,5 +51,11 @@ release :app do
   set applications: [
     :runtime_tools
   ]
+  set commands: [
+    create: "rel/commands/create.sh",
+    migrate: "rel/commands/migrate.sh",
+    rollback: "rel/commands/rollback.sh",
+    seed: "rel/commands/seed.sh",
+  ]
 end
 
