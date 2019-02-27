@@ -43,4 +43,23 @@ defmodule AppWeb.Endpoint do
     signing_salt: "BWeTmQxT"
 
   plug AppWeb.Router
+
+  def init(_type, config) do
+    if config[:load_from_system_env] do
+      port = String.to_integer(get_env!("PORT"))
+      app_url = URI.parse(get_env!("APP_URL"))
+      config =
+        config
+        |> Keyword.put(:http, [:inet6, port: port])
+        |> Keyword.put(:url, [host: app_url.host, port: app_url.port])
+        |> Keyword.put(:secret_key_base, get_env!("SECRET_KEY_BASE"))
+      {:ok, config}
+    else
+      {:ok, config}
+    end
+  end
+
+  defp get_env!(name) do
+    System.get_env(name) || raise "expected the #{name} environment variable to be set"
+  end
 end
