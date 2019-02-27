@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# shellcheck source=./_env.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_env.sh"
+
+docker build \
+  --build-arg APP_NAME \
+  --build-arg APP_VERSION \
+  --build-arg ELIXIR_VERSION \
+  --build-arg NODEJS_VERSION \
+  -t "$APP_NAME:$APP_VERSION-$BUILD" \
+  -t "$APP_NAME:$APP_VERSION" \
+  -t "$APP_NAME:latest" \
+  .
