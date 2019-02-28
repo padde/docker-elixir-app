@@ -44,6 +44,8 @@ RUN mix do local.hex --force, local.rebar --force
 
 COPY --from=deps-getter /opt/app/deps/ $HOME/deps/
 COPY .tool-versions mix.exs mix.lock $HOME/
+RUN mix deps.compile
+
 COPY config/ $HOME/config/
 COPY lib/ $HOME/lib/
 COPY priv/ $HOME/priv
