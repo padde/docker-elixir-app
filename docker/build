@@ -13,4 +13,5 @@ docker build \
   -t "$APP_NAME:$APP_VERSION-$BUILD" \
   -t "$APP_NAME:$APP_VERSION" \
   -t "$APP_NAME:latest" \
+  "$@" \
   .
