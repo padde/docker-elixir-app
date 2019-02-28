@@ -4,7 +4,8 @@ set -euo pipefail
 
 # shellcheck source=./_env.sh
 source "$(dirname "${BASH_SOURCE[0]}")/_env.sh"
-PORT=$(sed -En 's/^PORT=(.*)/\1/p' "$(dirname "${BASH_SOURCE[0]}")/docker.env")
+
+PORT=$(sed -En 's/^PORT=(.*)/\1/p' "docker/docker.env")
 
 docker run \
   --expose "$PORT" -p "$PORT:$PORT" \
