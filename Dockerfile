@@ -43,7 +43,8 @@ WORKDIR $HOME
 RUN mix do local.hex --force, local.rebar --force
 
 COPY --from=deps-getter /opt/app/deps/ $HOME/deps/
-COPY .tool-versions mix.exs mix.lock $HOME/
+COPY --from=deps-getter /opt/app/mix.lock $HOME/
+COPY .tool-versions mix.exs $HOME/
 RUN mix deps.compile
 
 COPY config/ $HOME/config/
