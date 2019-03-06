@@ -2,7 +2,7 @@ defmodule Ecto.ReleaseTasks.Rollback do
   # Based on mix ecto.rollback
   # https://github.com/elixir-ecto/ecto_sql/blob/5e78291dbc8c0c6d249d8ad7150c120a4a836c59/lib/mix/tasks/ecto.rollback.ex
 
-  import Ecto.ReleaseTasks
+  @shortdoc "Rolls back the repository migrations"
 
   @aliases [
     r: :repo,
@@ -23,42 +23,35 @@ defmodule Ecto.ReleaseTasks.Rollback do
 
   @moduledoc """
   Reverts applied migrations in the given repository.
-  Migrations are expected at "priv/YOUR_REPO/migrations" directory
-  of the current application, where "YOUR_REPO" is the last segment
-  in your repository name. For example, the repository `MyApp.Repo`
-  will use "priv/repo/migrations". The repository `Whatever.MyRepo`
-  will use "priv/my_repo/migrations".
-  You can configure a repository to use another directory by specifying
-  the `:priv` key under the repository configuration. The "migrations"
-  part will be automatically appended to it. For instance, to use
-  "priv/custom_repo/migrations":
-      config :my_app, MyApp.Repo, priv: "priv/custom_repo"
+
   This task runs all pending migrations by default. Runs the last
   applied migration by default. To roll back to a version number,
   supply `--to version_number`. To roll back a specific number of
   times, use `--step n`. To undo all applied migrations, provide
   `--all`.
-  The repositories to rollback are the ones specified under the
-  `:ecto_repos` option in the current app configuration. However,
-  if the `-r` option is given, it replaces the `:ecto_repos` config.
-  If a repository has not yet been started, one will be started outside
-  your application supervision tree and shutdown afterwards.
-  ## Examples
-      mix ecto.rollback
-      mix ecto.rollback -r Custom.Repo
-      mix ecto.rollback -n 3
-      mix ecto.rollback --step 3
-      mix ecto.rollback --to 20080906120000
-  ## Command line options
-    * `-r`, `--repo` - the repo to rollback
-    * `--all` - revert all applied migrations
-    * `--step` / `-n` - revert n number of applied migrations
-    * `--to` - revert all migrations down to and including version
-    * `--quiet` - do not log migration commands
-    * `--prefix` - the prefix to run migrations on
-    * `--pool-size` - the pool size if the repository is started only for the task (defaults to 1)
-    * `--log-sql` - log the raw sql migrations are running
+
+  EXAMPLES
+
+    ecto rollback
+    ecto rollback -r Custom.Repo
+    ecto rollback -n 3
+    ecto rollback --step 3
+    ecto rollback --to 20080906120000
+
+  OPTIONS
+
+    -r, --repo   the repo to rollback
+    --all        revert all applied migrations
+    --step -n    revert n number of applied migrations
+    --to         revert all migrations down to and including version
+    --quiet      do not log migration commands
+    --prefix     the prefix to run migrations on
+    --pool-size  the pool size if the repository is started only for the task
+                 (defaults to 1)
+    --log-sql    log the raw sql migrations are running
   """
+
+  use Ecto.ReleaseTasks.Task
 
   def run(args, migrator \\ &Ecto.Migrator.run/4) do
     repos = parse_repo(args)
@@ -75,6 +68,7 @@ defmodule Ecto.ReleaseTasks.Rollback do
         else: opts
 
     Enum.each repos, fn repo ->
+      ensure_repo(repo)
       path = ensure_migrations_path(repo)
       {:ok, pid, apps} = ensure_started(repo, opts)
 

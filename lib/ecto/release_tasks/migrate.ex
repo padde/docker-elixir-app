@@ -2,7 +2,7 @@ defmodule Ecto.ReleaseTasks.Migrate do
   # Based on mix ecto.migrate
   # https://github.com/elixir-ecto/ecto_sql/blob/5e78291dbc8c0c6d249d8ad7150c120a4a836c59/lib/mix/tasks/ecto.migrate.ex
 
-  import Ecto.ReleaseTasks
+  @shortdoc "Runs the repository migrations"
 
   @aliases [
     n: :step,
@@ -23,45 +23,35 @@ defmodule Ecto.ReleaseTasks.Migrate do
 
   @moduledoc """
   Runs the pending migrations for the given repository.
-  Migrations are expected at "priv/YOUR_REPO/migrations" directory
-  of the current application, where "YOUR_REPO" is the last segment
-  in your repository name. For example, the repository `MyApp.Repo`
-  will use "priv/repo/migrations". The repository `Whatever.MyRepo`
-  will use "priv/my_repo/migrations".
-  You can configure a repository to use another directory by specifying
-  the `:priv` key under the repository configuration. The "migrations"
-  part will be automatically appended to it. For instance, to use
-  "priv/custom_repo/migrations":
-      config :my_app, MyApp.Repo, priv: "priv/custom_repo"
+
   This task runs all pending migrations by default. To migrate up to a
   specific version number, supply `--to version_number`. To migrate a
   specific number of times, use `--step n`.
-  The repositories to migrate are the ones specified under the
-  `:ecto_repos` option in the current app configuration. However,
-  if the `-r` option is given, it replaces the `:ecto_repos` config.
-  Since Ecto tasks can only be executed once, if you need to migrate
-  multiple repositories, set `:ecto_repos` accordingly or pass the `-r`
-  flag multiple times.
-  If a repository has not yet been started, one will be started outside
-  your application supervision tree and shutdown afterwards.
-  ## Examples
-      mix ecto.migrate
-      mix ecto.migrate -r Custom.Repo
-      mix ecto.migrate -n 3
-      mix ecto.migrate --step 3
-      mix ecto.migrate -v 20080906120000
-      mix ecto.migrate --to 20080906120000
-  ## Command line options
-    * `-r`, `--repo` - the repo to migrate
-    * `--all` - run all pending migrations
-    * `--step` / `-n` - run n number of pending migrations
-    * `--to` - run all migrations up to and including version
-    * `--quiet` - do not log migration commands
-    * `--prefix` - the prefix to run migrations on
-    * `--pool-size` - the pool size if the repository is started only for the task (defaults to 1)
-    * `--log-sql` - log the raw sql migrations are running
-    * `--strict-version-order` - abort when applying a migration with old timestamp
+
+  EXAMPLES
+
+    ecto migrate
+    ecto migrate -r Custom.Repo
+    ecto migrate -n 3
+    ecto migrate --step 3
+    ecto migrate -v 20080906120000
+    ecto migrate --to 20080906120000
+
+  OPTIONS
+
+    -r, --repo              the repo to migrate
+    --all                   run all pending migrations
+    --step, -n              run n number of pending migrations
+    --to                    run all migrations up to and including version
+    --quiet                 do not log migration commands
+    --prefix                the prefix to run migrations on
+    --pool-size             the pool size if the repository is started only for
+                            the task (defaults to 1)
+    --log-sq                log the raw sql migrations are running
+    --strict-version-order  abort when applying a migration with old timestamp
   """
+
+  use Ecto.ReleaseTasks.Task
 
   def run(args, migrator \\ &Ecto.Migrator.run/4) do
     repos = parse_repo(args)
@@ -78,6 +68,7 @@ defmodule Ecto.ReleaseTasks.Migrate do
         else: opts
 
     Enum.each repos, fn repo ->
+      ensure_repo(repo)
       path = ensure_migrations_path(repo)
       {:ok, pid, apps} = ensure_started(repo, opts)
 

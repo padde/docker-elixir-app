@@ -52,10 +52,7 @@ release :app do
     :runtime_tools
   ]
   set commands: [
-    create: "rel/commands/create.sh",
-    migrate: "rel/commands/migrate.sh",
-    rollback: "rel/commands/rollback.sh",
-    seed: "rel/commands/seed.sh",
+    ecto: "rel/commands/ecto.sh"
   ]
 end
 
