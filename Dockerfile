@@ -81,5 +81,7 @@ COPY docker/entrypoint.sh $HOME/
 COPY --from=builder "/opt/app/_build/$MIX_ENV/rel/$APP_NAME/releases/$APP_VERSION/$APP_NAME.tar.gz" release.tar.gz
 RUN tar xfz release.tar.gz
 
+HEALTHCHECK CMD $HOME/bin/$APP_NAME ping || exit 1
+
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["foreground"]
