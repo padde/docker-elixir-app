@@ -12,7 +12,7 @@ WORKDIR $HOME
 
 RUN mix do local.hex --force, local.rebar --force
 
-COPY .tool-versions mix.exs mix.lock ./
+COPY .tool-versions mix.exs mix.lock $HOME/
 RUN mix do deps.get --only=$MIX_ENV
 
 
@@ -76,7 +76,7 @@ RUN apk update && apk add --no-cache \
 ENV REPLACE_OS_VARS=true \
     APP_NAME=$APP_NAME
 
-COPY docker/entrypoint.sh .
+COPY docker/entrypoint.sh $HOME/
 COPY --from=builder "/opt/app/_build/$MIX_ENV/rel/$APP_NAME/releases/$APP_VERSION/$APP_NAME.tar.gz" release.tar.gz
 RUN tar xfz release.tar.gz
 
