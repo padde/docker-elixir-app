@@ -56,7 +56,7 @@ COPY --from=asset-builder /opt/app/priv/static/ $HOME/priv/static/
 RUN mix phx.digest
 
 COPY rel/ $HOME/rel
-RUN mix release --verbose
+RUN mix distillery.release --verbose
 
 
 
